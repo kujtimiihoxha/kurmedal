@@ -166,7 +166,7 @@
                   </v-list-item-content>
                 </v-list-item>
                 <v-divider
-                  v-if="index + 1 < listEvents.april.length"
+                  v-if="index + 1 < listEvents.may.length"
                   :key="index"
                 ></v-divider>
               </template>
