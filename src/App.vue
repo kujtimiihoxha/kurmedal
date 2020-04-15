@@ -39,7 +39,7 @@
                     dense
                     v-model="selectedNumber"
                     class="pt-2 pr-2"
-                    label="Zgjedh numrin e parafundit të letërnjoftimit"
+                    label="Zgjedh shifren e parafundit të Nr. Personal"
                   ></v-select>
                   <v-menu bottom right>
                     <template v-slot:activator="{ on }">
@@ -110,7 +110,7 @@
             dense
             v-model="selectedNumber"
             class="pa-4"
-            label="Zgjedh numrin e parafundit të letërnjoftimit"
+            label="Zgjedh shifren e parafundit të Nr. Personal"
           ></v-select>
         </v-row>
         <v-row class="d-flex d-sm-flex d-md-none">
