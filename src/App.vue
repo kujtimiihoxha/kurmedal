@@ -5,6 +5,26 @@
         <img src="./assets/logo.png" alt="Logo" />
       </v-avatar>
       <v-toolbar-title class="white--text">Kur me dal?</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-menu bottom right>
+        <template v-slot:activator="{ on }">
+          <v-btn outlined color="white" v-on="on">
+            <span>{{ langToLabel[lang] }}</span>
+            <v-icon right>mdi-menu-down</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="setLanguage('sq')">
+            <v-list-item-title>Shqip</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="setLanguage('en')">
+            <v-list-item-title>English</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="setLanguage('srb')">
+            <v-list-item-title>Srpski</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <v-content>
       <v-container fluid>
@@ -23,7 +43,7 @@
                     color="grey darken-2"
                     @click="setToday"
                   >
-                    Sot
+                    {{ todayMap[lang] }}
                   </v-btn>
                   <v-btn fab text small color="grey darken-2" @click="prev">
                     <v-icon small>mdi-chevron-left</v-icon>
@@ -39,12 +59,12 @@
                     dense
                     v-model="selectedNumber"
                     class="pt-2 pr-2"
-                    label="Zgjedh shifren e parafundit të Nr. Personal"
+                    :label="inputMap[lang]"
                   ></v-select>
                   <v-menu bottom right>
                     <template v-slot:activator="{ on }">
                       <v-btn outlined color="grey darken-2" v-on="on">
-                        <span>{{ typeToLabel[type] }}</span>
+                        <span>{{ typeToLabel[lang][type] }}</span>
                         <v-icon right>mdi-menu-down</v-icon>
                       </v-btn>
                     </template>
@@ -72,8 +92,8 @@
                   :event-height="40"
                   :interval-height="30"
                   :events="events"
-                  :weekday-format="d => daysMap[d.weekday]"
-                  :month-format="m => monthMap[m.month - 1]"
+                  :weekday-format="d => daysMap[lang][d.weekday]"
+                  :month-format="m => monthMap[lang][m.month - 1]"
                   :event-color="getEventColor"
                   :interval-format="i => i.time"
                   :now="today"
@@ -110,13 +130,13 @@
             dense
             v-model="selectedNumber"
             class="pa-4"
-            label="Zgjedh shifren e parafundit të Nr. Personal"
+            :label="inputMap[lang]"
           ></v-select>
         </v-row>
         <v-row class="d-flex d-sm-flex d-md-none">
           <v-card min-width="100vw" class="mx-auto">
             <v-list subheader>
-              <v-subheader>Prill</v-subheader>
+              <v-subheader>{{ monthMap[lang][3] }}</v-subheader>
 
               <template v-for="(item, index) in listEvents.april">
                 <v-list-item :key="item.date + item.name" two-line>
@@ -131,7 +151,9 @@
                   </v-list-item-avatar>
 
                   <v-list-item-content>
-                    <v-list-item-title v-text="item.day"></v-list-item-title>
+                    <v-list-item-title
+                      v-text="daysMapL[lang][item.day]"
+                    ></v-list-item-title>
                     <v-list-item-subtitle
                       v-text="item.name"
                     ></v-list-item-subtitle>
@@ -144,7 +166,7 @@
               </template>
             </v-list>
             <v-list subheader>
-              <v-subheader>Maj</v-subheader>
+              <v-subheader>{{ monthMap[lang][4] }}</v-subheader>
 
               <template v-for="(item, index) in listEvents.may">
                 <v-list-item :key="item.date + item.name" two-line>
@@ -159,7 +181,9 @@
                   </v-list-item-avatar>
 
                   <v-list-item-content>
-                    <v-list-item-title v-text="item.day"></v-list-item-title>
+                    <v-list-item-title
+                      v-text="daysMapL[lang][item.day]"
+                    ></v-list-item-title>
                     <v-list-item-subtitle
                       v-text="item.name"
                     ></v-list-item-subtitle>
@@ -176,7 +200,11 @@
       </v-container>
     </v-content>
     <v-footer app>
-      <a href="https://github.com/kujtimiihoxha/kurmedal" target="_blank" class="pt-2">
+      <a
+        href="https://github.com/kujtimiihoxha/kurmedal"
+        target="_blank"
+        class="pt-2"
+      >
         <svg id="i-github" viewBox="0 0 64 64" width="25" height="25">
           <path
             stroke-width="0"
@@ -186,7 +214,7 @@
         </svg>
       </a>
       <v-spacer></v-spacer>
-      <a href="./assets/05-1898.pdf" target="_blank">Vendimi</a>
+      <a href="./assets/05-1898.pdf" target="_blank">{{ decisionMap[lang] }}</a>
     </v-footer>
   </v-app>
 </template>
@@ -197,39 +225,126 @@ export default {
   data: () => ({
     focus: "",
     type: "month",
+    todayMap: {
+      sq: "Sot",
+      en: "Today",
+      srb: "Danas"
+    },
+    decisionMap: {
+      sq: "Vendimi",
+      en: "Decision",
+      srb: "Odluka"
+    },
+    inputMap: {
+      sq: "Zgjedh shifren e parafundit të Nr. Personal",
+      srb: "Izaberite vaš predposledni broj vašeg ličnog broja",
+      en: "Select the second last number of your Personal ID/ Passport No."
+    },
     typeToLabel: {
-      month: "Muaj",
-      week: "Javë",
-      day: "Dite"
+      sq: {
+        month: "Muaj",
+        week: "Javë",
+        day: "Dite"
+      },
+      en: {
+        month: "Month",
+        week: "Week",
+        day: "Day"
+      },
+      srb: {
+        month: "Mesec",
+        week: "Nedelja",
+        day: "Dan"
+      }
+    },
+    lang: localStorage.getItem("language") || "sq",
+    langToLabel: {
+      sq: "Shqip",
+      en: "English",
+      srb: "Srpski"
     },
     start: null,
     end: null,
     selectedNumber: localStorage.getItem("selectedNumber") || "0",
     weekdays: [1, 2, 3, 4, 5, 6, 0],
-    daysMap: ["D", "Ha", "Ma", "Mr", "Ej", "Pr", "Sh"],
-    daysMapL: [
-      "E Diel",
-      "E Hënë",
-      "E Martë",
-      "E Mërkurë",
-      "E Enjte",
-      "E Premte",
-      "E Shtunë"
-    ],
-    monthMap: [
-      "Janar",
-      "Shkurt",
-      "Mars",
-      "Prill",
-      "Maj",
-      "Qershor",
-      "Korrik",
-      "Gushtë",
-      "Shtator",
-      "Tetor",
-      "Nëntor",
-      "Dhjetor"
-    ],
+    daysMap: {
+      sq: ["D", "Ha", "Ma", "Mr", "Ej", "Pr", "Sh"],
+      en: ["SUN", "MON", "TUE", "WED", "THUR", "FRI", "SAT"],
+      srb: ["N", "P", "U", "S", "Č", "P", "S"]
+    },
+    daysMapL: {
+      sq: [
+        "E Diel",
+        "E Hënë",
+        "E Martë",
+        "E Mërkurë",
+        "E Enjte",
+        "E Premte",
+        "E Shtunë"
+      ],
+      en: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      srb: [
+        "Nedelja",
+        "Ponedeljak",
+        "Utorak",
+        "Sreda",
+        "Četvrtak",
+        "Petak",
+        "Subota"
+      ]
+    },
+    monthMap: {
+      sq: [
+        "Janar",
+        "Shkurt",
+        "Mars",
+        "Prill",
+        "Maj",
+        "Qershor",
+        "Korrik",
+        "Gushtë",
+        "Shtator",
+        "Tetor",
+        "Nëntor",
+        "Dhjetor"
+      ],
+      en: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      srb: [
+        "Januar",
+        "Februar",
+        "Mart",
+        "April",
+        "Maj",
+        "Jun",
+        "Jul",
+        "Avgust",
+        "Septembar",
+        "Oktobar",
+        "Novembar",
+        "Decembar"
+      ]
+    },
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -238,17 +353,7 @@ export default {
       april: [],
       may: []
     },
-    numbers: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party"
-    ]
+    numbers: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
   }),
   created() {
     this.setEvents();
@@ -260,8 +365,10 @@ export default {
         return "";
       }
 
-      const startMonth = this.monthMap[this.monthFormatter(start) - 1];
-      const endMonth = this.monthMap[this.monthFormatter(end) - 1];
+      const startMonth = this.monthMap[this.lang][
+        this.monthFormatter(start) - 1
+      ];
+      const endMonth = this.monthMap[this.lang][this.monthFormatter(end) - 1];
       const suffixMonth = startMonth === endMonth ? "" : endMonth;
 
       const startYear = start.year;
@@ -312,6 +419,10 @@ export default {
       this.focus = date;
       this.type = "day";
     },
+    setLanguage(l) {
+      this.lang = l;
+      localStorage.setItem("language", l);
+    },
     getEventColor(event) {
       return event.color;
     },
@@ -338,9 +449,7 @@ export default {
         listEv[mnth].push({
           date: parts[0],
           name: `${duration.from} - ${duration.to}`,
-          day: this.daysMapL[
-            new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getDay()
-          ],
+          day: new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getDay(),
           selected:
             new Date().toDateString() ===
             new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).toDateString()
