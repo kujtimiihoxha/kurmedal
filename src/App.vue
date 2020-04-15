@@ -70,13 +70,13 @@
                     </template>
                     <v-list>
                       <v-list-item @click="type = 'day'">
-                        <v-list-item-title>Ditë</v-list-item-title>
+                        <v-list-item-title>{{typeToLabel[lang].day}}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="type = 'week'">
-                        <v-list-item-title>Jave</v-list-item-title>
+                        <v-list-item-title>{{typeToLabel[lang].week}}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="type = 'month'">
-                        <v-list-item-title>Muaj</v-list-item-title>
+                        <v-list-item-title>{{typeToLabel[lang].month}}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
