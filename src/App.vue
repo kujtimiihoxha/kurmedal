@@ -176,6 +176,15 @@
       </v-container>
     </v-content>
     <v-footer app>
+      <a href="https://github.com/kujtimiihoxha/kurmedal" target="_blank" class="pt-2">
+        <svg id="i-github" viewBox="0 0 64 64" width="25" height="25">
+          <path
+            stroke-width="0"
+            fill="black"
+            d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z"
+          />
+        </svg>
+      </a>
       <v-spacer></v-spacer>
       <a href="./assets/05-1898.pdf" target="_blank">Vendimi</a>
     </v-footer>
@@ -351,28 +360,6 @@ export default {
     },
     updateRange({ start, end }) {
       this.setEvents();
-      // const events = [];
-      //
-      // const min = new Date(`${start.date}T00:00:00`);
-      // const max = new Date(`${end.date}T23:59:59`);
-      // const days = (max.getTime() - min.getTime()) / 86400000;
-      // const eventCount = this.rnd(days, days + 20);
-      //
-      // for (let i = 0; i < eventCount; i++) {
-      //   const allDay = this.rnd(0, 3) === 0;
-      //   const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-      //   const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-      //   const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-      //   const second = new Date(first.getTime() + secondTimestamp);
-      //
-      //   events.push({
-      //     name: this.names[this.rnd(0, this.names.length - 1)],
-      //     start: this.formatDate(first, !allDay),
-      //     end: this.formatDate(second, !allDay),
-      //     color: this.colors[this.rnd(0, this.colors.length - 1)]
-      //   });
-      // }
-
       this.start = start;
       this.end = end;
     },
@@ -380,9 +367,6 @@ export default {
       return d > 3 && d < 21
         ? "th"
         : ["th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"][d % 10];
-    },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
     },
     formatDate(a, withTime) {
       return withTime
