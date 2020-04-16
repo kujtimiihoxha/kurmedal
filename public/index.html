@@ -20,7 +20,8 @@
       src="https://www.googletagmanager.com/gtag/js?id=UA-152808354-1"
     ></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
+    delete window.Intl;
+    window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
       }
@@ -28,6 +29,7 @@
 
       gtag("config", "UA-152808354-1");
     </script>
+    <script src="<%= BASE_URL %>intl-polifill.js"></script>
   </head>
   <body>
     <noscript>
