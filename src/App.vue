@@ -446,14 +446,18 @@ export default {
         const parts = dt.split("-");
         const duration = events[dt][this.selectedNumber];
         const mnth = parts[1] === "04" ? "april" : "may";
-        listEv[mnth].push({
-          date: parts[0],
-          name: `${duration.from} - ${duration.to}`,
-          day: new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getDay(),
-          selected:
-            new Date().toDateString() ===
-            new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).toDateString()
-        });
+        let yesterday = new Date()
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (new Date(`${parts[2]}-${parts[1]}-${parts[0]}`) >= yesterday) {
+          listEv[mnth].push({
+            date: parts[0],
+            name: `${duration.from} - ${duration.to}`,
+            day: new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getDay(),
+            selected:
+                    new Date().toDateString() ===
+                    new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).toDateString()
+          });
+        }
         const date = `${parts[2]}-${parts[1]}-${parts[0]}`;
         const min = new Date(`${date}T${duration.from}:00`);
         const max = new Date(`${date}T${duration.to}:59`);
