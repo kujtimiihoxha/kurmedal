@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app clipped-left color="primary">
       <v-avatar width="60">
-        <img src="./assets/logo.png" alt="Logo" />
+        <img src="assets/logo.png" alt="Logo" />
       </v-avatar>
       <v-toolbar-title class="white--text">Kur me dal?</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -136,36 +136,6 @@
         <v-row class="d-flex d-sm-flex d-md-none">
           <v-card min-width="100vw" class="mx-auto">
             <v-list subheader>
-              <v-subheader>{{ monthMap[lang][3] }}</v-subheader>
-
-              <template v-for="(item, index) in listEvents.april">
-                <v-list-item :key="item.date + item.name" two-line>
-                  <v-list-item-avatar
-                    :color="item.selected ? 'pink' : 'blue lighten-5'"
-                  >
-                    <v-row align="center" justify="center">
-                      <div :class="{ 'white--text': item.selected }">
-                        {{ item.date }}
-                      </div>
-                    </v-row>
-                  </v-list-item-avatar>
-
-                  <v-list-item-content>
-                    <v-list-item-title
-                      v-text="daysMapL[lang][item.day]"
-                    ></v-list-item-title>
-                    <v-list-item-subtitle
-                      v-text="item.name"
-                    ></v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider
-                  v-if="index + 1 < listEvents.april.length"
-                  :key="index"
-                ></v-divider>
-              </template>
-            </v-list>
-            <v-list subheader>
               <v-subheader>{{ monthMap[lang][4] }}</v-subheader>
 
               <template v-for="(item, index) in listEvents.may">
@@ -220,6 +190,11 @@
 </template>
 
 <script>
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
 import events from "./orari_i_levizjes.json";
 export default {
   data: () => ({
@@ -442,32 +417,40 @@ export default {
         april: [],
         may: []
       };
-      Object.keys(events).forEach(dt => {
-        const parts = dt.split("-");
-        const duration = events[dt][this.selectedNumber];
-        const mnth = parts[1] === "04" ? "april" : "may";
-        let yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1);
-        if (new Date(`${parts[2]}-${parts[1]}-${parts[0]}`) >= yesterday) {
-          listEv[mnth].push({
-            date: parts[0],
-            name: `${duration.from} - ${duration.to}`,
-            day: new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getDay(),
-            selected:
-                    new Date().toDateString() ===
-                    new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).toDateString()
-          });
-        }
-        const date = `${parts[2]}-${parts[1]}-${parts[0]}`;
-        const min = new Date(`${date}T${duration.from}:00`);
-        const max = new Date(`${date}T${duration.to}:59`);
-        ev.push({
-          name: `${duration.from} - ${duration.to}`,
-          start: this.formatDate(min, true),
-          end: this.formatDate(max, true),
-          color: "pink"
-        });
-      });
+      let numberTasks = events[`${this.selectedNumber}`]
+      for (let day of [...Array(18).keys()]){
+          day = pad(day + 1, 2)
+          let yesterday = new Date()
+          yesterday.setDate(yesterday.getDate() - 1);
+          let taskDate = new Date(`2020-05-${day}`)
+          if (taskDate >= yesterday) {
+            listEv.may.push({
+              date: day,
+              name: `${numberTasks.morning.from} - ${numberTasks.morning.to} / ${numberTasks.evening.from} - ${numberTasks.evening.to}`,
+              day: taskDate.getDay(),
+              selected:
+                      new Date().toDateString() ===
+                      taskDate.toDateString()
+            });
+
+            const date = `2020-05-${day}`;
+            console.log(new Date(`${date}T${numberTasks.morning.from}:00`))
+            const min = new Date(`${date}T${numberTasks.morning.from}:00`);
+            const max = new Date(`${date}T${numberTasks.morning.to}:59`);
+            ev.push({
+              name: `${numberTasks.morning.from} - ${numberTasks.morning.to}`,
+              start: this.formatDate(min, true),
+              end: this.formatDate(max, true),
+              color: "pink"
+            });
+            ev.push({
+              name: `${numberTasks.evening.from} - ${numberTasks.evening.to}`,
+              start: this.formatDate(min, true),
+              end: this.formatDate(max, true),
+              color: "primary"
+            });
+          }
+      }
       this.events = ev;
       this.listEvents = listEv;
     },
